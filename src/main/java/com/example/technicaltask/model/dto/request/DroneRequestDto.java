@@ -13,11 +13,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DroneRequestDto {
-    @NotNull
-    private int model;
+    @NotNull(message = "Model should not be empty")
+    @Min(value = 0, message = "Model not founded")
+    @Max(value = 3, message = "Model not founded")
+    private Integer model;
 
-    @NotNull
+    @NotNull(message = "Battery Capacity should not be empty")
     @Min(value = 0, message = "Battery Capacity Should be Positive value")
     @Max(value = 100, message = "Battery Capacity can not exceed 100%")
-    private int batteryCapacity;
+    private Integer batteryCapacity;
 }

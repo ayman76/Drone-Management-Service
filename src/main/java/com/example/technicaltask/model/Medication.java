@@ -31,7 +31,7 @@ public class Medication {
     private String imageUUID;
 
     @ManyToMany() // Specifies a many-to-many relationship with Drone entity
-    @JoinTable(name = "drone_medication", joinColumns = @JoinColumn(name = "drone_serial_number"), inverseJoinColumns = @JoinColumn(name = "medication_code"))
+    @JoinTable(name = "drone_medication", joinColumns = @JoinColumn(name = "medication_code"), inverseJoinColumns = @JoinColumn(name = "drone_serial_number"))
     private List<Drone> drones;
 
     @PrePersist // Specifies a method to be executed before entity insertion
