@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class MedicationRequestDto {
     @NotNull
-    @Pattern(regexp = "[a-zA-Z0-9-_]+", message = "Invalid name")
+    @Pattern(regexp = "[a-zA-Z0-9-_]+", message = "Invalid name (Name should consists of letters, numbers, ‘-‘, ‘_’)")
     private String name;
     @NotNull
     @Min(value = 0, message = "Weight must be positive value")
