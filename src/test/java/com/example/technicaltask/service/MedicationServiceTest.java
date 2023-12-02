@@ -25,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MedicationServiceTest {
@@ -46,9 +46,10 @@ class MedicationServiceTest {
 
     @Test
     public void MedicationService_createMedicationWithImage_ReturnMedicationResponseDto() throws IOException {
+        //Given
         MultipartFile imageFile = Mockito.mock(MultipartFile.class);
         MedicationRequestDto mockMedicationRequest = MedicationRequestDto.builder().name("Med-1").weight(25).imageFile(imageFile).build();
-        Medication mockMedication = Medication.builder().name(mockMedicationRequest.getName()).weight(mockMedicationRequest.getWeight()).image(mockMedicationRequest.getImageFile().getBytes()).imageUUID(medicationService.generateImageUUID()).build();
+        Medication mockMedication = Medication.builder().name(mockMedicationRequest.getName()).weight(mockMedicationRequest.getWeight()).imageUUID(medicationService.generateImageUUID()).build();
         mockMedication.generateCode();
 
         MedicationResponseDto mockMedicationResponse = MedicationResponseDto.builder().name(mockMedication.getName()).weight(mockMedication.getWeight()).code(mockMedication.getCode()).imageUUID(mockMedication.getImageUUID()).build();
@@ -58,9 +59,14 @@ class MedicationServiceTest {
         when(modelMapper.map(Mockito.any(Medication.class), Mockito.any())).thenReturn(mockMedicationResponse);
         when(medicationRepository.save(Mockito.any(Medication.class))).thenReturn(mockMedication);
 
+        //When
         MedicationResponseDto result = medicationService.createMedication(mockMedicationRequest);
 
+        //Then
         Assertions.assertThat(result).isNotNull();
+        verify(modelMapper, times(2)).map(any(), any());
+        verify(imageFile, times(1)).getBytes();
+        verify(medicationRepository, times(1)).save(any());
     }
 
     @Test
@@ -80,10 +86,13 @@ class MedicationServiceTest {
         when(modelMapper.map(Mockito.any(Medication.class), Mockito.any())).thenReturn(mockMedicationResponse);
         when(medicationRepository.save(Mockito.any(Medication.class))).thenReturn(mockMedication);
 
+        //When
         MedicationResponseDto result = medicationService.createMedication(mockMedicationRequest);
 
+        //Then
         Assertions.assertThat(result).isNotNull();
-
+        verify(modelMapper, times(2)).map(any(), any());
+        verify(medicationRepository, times(1)).save(any());
     }
 
     @Test
@@ -109,6 +118,8 @@ class MedicationServiceTest {
         ApiResponse<MedicationResponseDto> result = medicationService.getAllMedications(0, 10);
 
         Assertions.assertThat(result).isNotNull();
+        verify(medicationRepository, times(1)).findAll(pageable);
+        verify(modelMapper, times(mockMedicationList.size())).map(any(), any());
     }
 
 
