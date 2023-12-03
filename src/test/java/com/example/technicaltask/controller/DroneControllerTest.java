@@ -24,7 +24,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -148,12 +147,12 @@ class DroneControllerTest {
     @Test
     public void DroneController_GetAllAvailableDrones_ReturnIsOK() throws Exception {
         //Given
-        List<Drone> drones = droneRepository.findAll().stream().sorted(Comparator.comparing(Drone::getState)).sorted(Comparator.comparing(Drone::getBatteryCapacity)).toList();
+        List<Drone> drones = droneRepository.findAll().stream().filter(drone -> drone.getState() == State.IDLE && drone.getBatteryCapacity() > 25).toList();
 
 
         ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get(URL + "/available-for-loading")
                 .contentType(MediaType.APPLICATION_JSON));
-        response.andExpect(status().isOk()).andExpect(jsonPath("$.content.size()", CoreMatchers.is(drones.size())));
+        response.andExpect(status().isOk()).andExpect(jsonPath("$.totalElements", CoreMatchers.is(drones.size())));
     }
 
     @Test
@@ -185,7 +184,7 @@ class DroneControllerTest {
                 .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("$.content.size()", CoreMatchers.is(savedDrone.getLoadedMedications().size())));
+                .andExpect(jsonPath("$.totalElements", CoreMatchers.is(savedDrone.getLoadedMedications().size())));
     }
 
 

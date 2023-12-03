@@ -101,7 +101,7 @@ class MedicationControllerTest {
         ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get(URL + "/all")
                 .contentType(MediaType.APPLICATION_JSON));
 
-        response.andExpect(status().isOk()).andExpect(jsonPath("$.content.size()", CoreMatchers.is(medicationRepository.findAll().size())));
+        response.andExpect(status().isOk()).andExpect(jsonPath("$.totalElements", CoreMatchers.is(medicationRepository.findAll().size())));
     }
 
 
