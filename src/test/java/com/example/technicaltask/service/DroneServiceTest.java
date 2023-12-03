@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -45,7 +46,6 @@ class DroneServiceTest {
 
     @Mock
     private ModelMapper modelMapper;
-
     @InjectMocks
     private DroneServiceImpl droneService;
 
@@ -248,6 +248,24 @@ class DroneServiceTest {
         assertThrows(WeightLimitExceededException.class, () -> droneService.loadMedicationsToDrone(serialNumber, List.of(new LoadedMedicationRequestDto("MED_CODE_0FAD1A"), new LoadedMedicationRequestDto("MED_CODE_0FAD1B"))));
         verify(medicationRepository, times(2)).findById(any());
         verify(droneRepository, times(1)).findById(any());
+    }
+
+    @Test
+    public void DroneService_CheckDroneBatteryCapacity() {
+        //Given
+        Drone drone = Drone.builder().serialNumber("5d80b2de-3066-49ad-96a1-9d5b1bcb7865").batteryCapacity(100).state(State.IDLE).weightLimit(Model.Lightweight.getValue()).model(Model.Lightweight).build();
+        Drone drone1 = Drone.builder().serialNumber("5d80b2de-3066-49ad-96a1-9d5b1bcb7862").batteryCapacity(80).state(State.LOADED).weightLimit(Model.Cruiserweight.getValue()).model(Model.Cruiserweight).build();
+
+        List<Drone> drones = List.of(drone, drone1);
+        long count = drones.stream().filter(d -> d.getState() == State.IDLE && drone.getBatteryCapacity() > 25).count();
+
+        when(droneRepository.findAll()).thenReturn(drones);
+        //When
+        droneService.checkDroneBatteryLevel();
+
+
+        verify(droneRepository, times(1)).findAll();
+        assertEquals(1, count);
     }
 
 

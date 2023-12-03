@@ -18,4 +18,6 @@ public interface DroneService {
     DroneResponseDto loadMedicationsToDrone(String droneSerialNumber, List<LoadedMedicationRequestDto> medication);
 
     ApiResponse<MedicationResponseDto> getLoadedMedications(String droneSerialNumber, int pageNo, int pageSize);
+
+    void checkDroneBatteryLevel();
 }
