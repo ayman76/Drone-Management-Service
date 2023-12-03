@@ -1,12 +1,15 @@
 package com.example.technicaltask.service;
 
 import com.example.technicaltask.model.Drone;
+import com.example.technicaltask.model.Model;
 import com.example.technicaltask.model.State;
 import com.example.technicaltask.repository.DroneRepository;
 import com.example.technicaltask.service.impl.DroneServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,6 +21,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
+@Transactional
+@ActiveProfiles(value = "test")
 public class DroneServiceIT {
     @Autowired
     private DroneRepository droneRepository;
@@ -29,6 +34,8 @@ public class DroneServiceIT {
     public void DroneService_CheckDroneBatteryCapacity() throws IOException {
 
         //Given
+        Drone d = Drone.builder().model(Model.Lightweight).weightLimit(Model.Lightweight.getValue()).batteryCapacity(100).state(State.IDLE).build();
+        droneRepository.save(d);
         List<Drone> drones = droneRepository.findAll().stream().sorted(Comparator.comparing(Drone::getState)).sorted(Comparator.comparing(Drone::getBatteryCapacity)).toList();
 
         //When

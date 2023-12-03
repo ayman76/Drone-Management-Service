@@ -1,6 +1,7 @@
 package com.example.technicaltask.model.dto.request;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -14,12 +15,13 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MedicationRequestDto {
-    @NotNull
+    @NotNull(message = "Name must not be null")
+    @NotBlank(message = "Name must not be empty")
     @Pattern(regexp = "[a-zA-Z0-9-_]+", message = "Invalid name (Name should consists of letters, numbers, ‘-‘, ‘_’)")
     private String name;
-    @NotNull
+    @NotNull(message = "Weight must not be null")
     @Min(value = 0, message = "Weight must be positive value")
-    private int weight;
+    private Integer weight;
 
     private MultipartFile imageFile;
 }
