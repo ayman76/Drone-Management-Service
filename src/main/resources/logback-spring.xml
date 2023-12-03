@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    <property name="LOGS" value="./logs/center-management-logs"/>
+    <property name="patternValue" value="%d{yyyy-MM-dd HH:mm:ss.SSS} - [%thread] - [%X{traceId:-},%X{spanId:-}]-%L-[%logger.%M] - %msg%n"/>
+    <root level="info">
+        <appender-ref ref="File-Appender"/>
+        <appender-ref ref="Console"/>
+    </root>
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${patternValue} </pattern>
+        </encoder>
+    </appender>
+    <appender name="File-Appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file> ${LOGS}/Log.log </file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${patternValue} </pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS}/log-files/logs/%d{yyyy-MM-dd}/Log-%d{hh-mm-a}-%i.log.zip</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+    <logger name="com.example.technicaltask.service" additivity="false" level="info">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="File-Appender"/>
+    </logger>
+
+</configuration>
