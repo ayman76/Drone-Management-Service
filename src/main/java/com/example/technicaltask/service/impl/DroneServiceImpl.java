@@ -15,21 +15,28 @@ import com.example.technicaltask.repository.DroneRepository;
 import com.example.technicaltask.repository.MedicationRepository;
 import com.example.technicaltask.service.DroneService;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.example.technicaltask.utils.HelperFunctions.getApiResponse;
 
 @Service
 @RequiredArgsConstructor
+@EnableScheduling
 public class DroneServiceImpl implements DroneService {
+    private static final Logger log = LogManager.getLogger(DroneServiceImpl.class);
     private final DroneRepository droneRepository;
     private final MedicationRepository medicationRepository;
     private final ModelMapper modelMapper;
@@ -120,4 +127,13 @@ public class DroneServiceImpl implements DroneService {
         return droneRepository.findById(serialNumber).orElseThrow(() -> new ResourceNotFoundException("Not founded drone with serial number: " + serialNumber));
     }
 
+    @Override
+    @Scheduled(cron = "* */2 * * * *")
+    public void checkDroneBatteryLevel() {
+        log.info("Check Drone Battery Capacity");
+        List<Drone> drones = droneRepository.findAll().stream().sorted(Comparator.comparing(Drone::getState)).sorted(Comparator.comparing(Drone::getBatteryCapacity)).toList();
+        log.info("Available Drones to load: " + drones.stream().filter(drone -> drone.getState() == State.IDLE && drone.getBatteryCapacity() > 25).count());
+        log.info("Serial Number                                Battery Capacity            State");
+        drones.forEach(d -> log.info("Drone " + d.getSerialNumber() + ":        " + d.getBatteryCapacity() + "                    " + d.getState()));
+    }
 }
