@@ -53,7 +53,7 @@ maven spring-boot:run
 If using Docker
 
 ```bash
-docker build -t drone-management-service-api .
+docker build -t technical-task-api .
 docker-compose up -d
 ```
 
