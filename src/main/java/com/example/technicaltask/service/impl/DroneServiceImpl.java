@@ -128,7 +128,7 @@ public class DroneServiceImpl implements DroneService {
     }
 
     @Override
-    @Scheduled(cron = "* */2 * * * *")
+    @Scheduled(cron = "0 */2 * * * ?")
     public void checkDroneBatteryLevel() {
         log.info("Check Drone Battery Capacity");
         List<Drone> drones = droneRepository.findAll().stream().sorted(Comparator.comparing(Drone::getState)).sorted(Comparator.comparing(Drone::getBatteryCapacity)).toList();
