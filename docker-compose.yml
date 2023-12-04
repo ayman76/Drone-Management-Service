@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  technical-task:
+    image: technical-task-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysqldb
+    environment:
+      RDS_HOSTNAME: mysqldb
+      RDS_PORT: 3306
+      RDS_DBNAME: technical-task
+      RDS_USERNAME: user
+      RDS_PASSWORD: password
+      RDS_TEST_HOSTNAME: mysqldb
+      RDS_TEST_PORT: 3306
+      RDS_TEST_DBNAME: technical-task-test
+      RDS_TEST_USERNAME: user
+      RDS_TEST_PASSWORD: password
+    networks:
+      - app-network
+
+  mysqldb:
+    image: mysql:latest
+    ports:
+      - "3307:3306"
+    restart: always
+    environment:
+      MYSQL_DATABASE: technical-task
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - mysql-database-data-volume:/var/lib/mysql
+    networks:
+      - app-network
+
+
+volumes:
+  mysql-database-data-volume:
+networks:
+  app-network:
+
+
