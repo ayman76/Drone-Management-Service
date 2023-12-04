@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DroneRepository extends JpaRepository<Drone, String> {
-    @Query(value = "select d from Drone as d where d.state = :state")
+    @Query(value = "select d from Drone as d where d.state = :state and d.batteryCapacity >= 25")
     Page<Drone> findAllAvailableDrones(Pageable pageable, State state);
 }
